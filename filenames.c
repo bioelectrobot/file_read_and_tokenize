@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 
 #define LENGTH 10000
 
@@ -12,6 +13,7 @@ int main(int argcount, char *clargs[])
 {
   int input_file;
   int output_file;
+  char* filenames[LENGTH];
 
   char file_data[LENGTH];
   int read_length;
@@ -20,21 +22,34 @@ int main(int argcount, char *clargs[])
   
   output_file = open_for_writing(clargs[2]);
   
-  while((read_length = read(input_file, &file_data, LENGTH)) > 0)
+  while((read_length = read(input_file, file_data, LENGTH)) > 0)
   {
-    write(output_file, &file_data, read_length);
-    printf("\n%s\n", file_data);
-
-    int fd = open_for_reading(file_data);
-    char data[LENGTH];
-    while((read_length = read(fd, &data, LENGTH)) > 0)
-    {
-      printf("\n%s\n", data);
-    } 
+    /*filenames[count] = file_data;*/
   }
   
   close(input_file);
   close(output_file);
+  
+  char * temp = strtok(file_data, "\n");
+
+  int count = 0;
+  while(temp != NULL)
+  {
+    filenames[count] = temp;
+    count++;
+    temp = strtok(NULL, "\n");
+  }
+
+  for(int i = 0; i < count; i++)
+  {
+    int f = open_for_reading(filenames[i]);
+    char data[LENGTH];
+    while((read_length = read(f, &data, LENGTH)) > 0)
+    {
+      printf("\ndata: %s\n", data);
+    } 
+    /*TODO: Create method to compute unique tokens and their count */
+  }
 
   return EXIT_SUCCESS;
 }
