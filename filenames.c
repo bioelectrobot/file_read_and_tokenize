@@ -8,6 +8,7 @@
 
 int open_for_reading(char *);
 int open_for_writing(char *);
+void compute_and_count_unique_tokens(char *);
 
 int main(int argcount, char *clargs[])
 {
@@ -48,7 +49,8 @@ int main(int argcount, char *clargs[])
     {
       printf("\ndata: %s\n", data);
     } 
-    /*TODO: Create method to compute unique tokens and their count */
+    
+    compute_and_count_unique_tokens(data);
   }
 
   return EXIT_SUCCESS;
@@ -76,5 +78,38 @@ int open_for_writing(char * filename)
     exit(EXIT_FAILURE);
   }
   return fd;
+}
+
+void compute_and_count_unique_tokens(char * fdata)
+{
+  printf("\nfrom compute method, fdata: %s\n", fdata);
+  char * tokens = strtok(fdata, " ");
+  char * token_data[LENGTH];
+  
+  int c = 0;
+  while(tokens != NULL)
+  {
+    token_data[c] = tokens;
+    printf("\ntoken_data[%d]: %s\n", c, token_data[c]);
+    c++;
+    tokens = strtok(NULL, " ");
+  }
+  
+  for(int i = 0; i < c; i++)
+  {
+    int match = 0;
+    printf("\n%s ", token_data[i]);
+    for(int j = 0; j < c; j++)
+    {
+      if( (strcmp(token_data[i], token_data[j]) == 0) )
+      {
+        if(j != i)
+        {
+          match++;
+        }
+      }
+    }
+    printf("%d \n", match + 1);
+  }
 }
 
