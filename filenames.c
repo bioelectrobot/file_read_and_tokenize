@@ -8,12 +8,11 @@
 
 int open_for_reading(char *);
 int open_for_writing(char *);
-void compute_and_count_unique_tokens(char *);
+void compute_and_count_unique_tokens(char *, char *);
 
 int main(int argcount, char *clargs[])
 {
   int input_file;
-  int output_file;
   char* filenames[LENGTH];
 
   char file_data[LENGTH];
@@ -21,15 +20,12 @@ int main(int argcount, char *clargs[])
   
   input_file = open_for_reading(clargs[1]);
   
-  output_file = open_for_writing(clargs[2]);
-  
   while((read_length = read(input_file, file_data, LENGTH)) > 0)
   {
     /*filenames[count] = file_data;*/
   }
   
   close(input_file);
-  close(output_file);
   
   char * temp = strtok(file_data, "\n");
 
@@ -47,10 +43,10 @@ int main(int argcount, char *clargs[])
     char data[LENGTH];
     while((read_length = read(f, &data, LENGTH)) > 0)
     {
-      printf("\ndata: %s\n", data);
+      /*printf("\ndata: %s\n", data);*/
     } 
     
-    compute_and_count_unique_tokens(data);
+    compute_and_count_unique_tokens(data, clargs[2]);
   }
 
   return EXIT_SUCCESS;
@@ -80,25 +76,27 @@ int open_for_writing(char * filename)
   return fd;
 }
 
-void compute_and_count_unique_tokens(char * fdata)
+void compute_and_count_unique_tokens(char * fdata, char * fname)
 {
-  printf("\nfrom compute method, fdata: %s\n", fdata);
   char * tokens = strtok(fdata, " ");
   char * token_data[LENGTH];
+  char match_data[LENGTH];
+  char match_count[LENGTH];
   
   int c = 0;
   while(tokens != NULL)
   {
     token_data[c] = tokens;
-    printf("\ntoken_data[%d]: %s\n", c, token_data[c]);
     c++;
     tokens = strtok(NULL, " ");
   }
-  
+
+  int fild = open_for_writing(fname);  
+
   for(int i = 0; i < c; i++)
   {
     int match = 0;
-    printf("\n%s ", token_data[i]);
+    strcat(match_data, token_data[i]);
     for(int j = 0; j < c; j++)
     {
       if( (strcmp(token_data[i], token_data[j]) == 0) )
@@ -109,7 +107,12 @@ void compute_and_count_unique_tokens(char * fdata)
         }
       }
     }
-    printf("%d \n", match + 1);
+
+    sprintf(match_count, " %d\n", match + 1);
+    strcat(match_data, match_count);
+    write(fild, match_data, sizeof(match_data));  
   }
+
+  close(fild);
 }
 
